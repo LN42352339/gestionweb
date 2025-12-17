@@ -1,0 +1,98 @@
+.
+├── eslint.config.js
+├── estructura_src.txt
+├── index.html
+├── package-lock.json
+├── package.json
+├── postcss.config.js
+├── public
+│   └── vite.svg
+├── README.md
+├── src
+│   ├── App.css
+│   ├── App.tsx
+│   ├── assets
+│   │   ├── img
+│   │   │   ├── bg-congreso.jpg
+│   │   │   ├── bg-congreso.webp
+│   │   │   ├── cargando.webp
+│   │   │   ├── logo.png
+│   │   │   ├── logo.webp
+│   │   │   ├── logo1.png
+│   │   │   ├── logo2.png
+│   │   │   ├── logo3.png
+│   │   │   └── logod.png
+│   │   └── react.svg
+│   ├── config
+│   │   └── firebaseConfig.ts
+│   ├── core
+│   │   ├── config
+│   │   ├── di
+│   │   │   └── repositories.ts
+│   │   ├── types
+│   │   └── utils
+│   ├── data
+│   │   ├── datasources
+│   │   │   ├── contactService.ts
+│   │   │   └── historialService.ts
+│   │   ├── mappers
+│   │   └── repositories
+│   │       ├── firebaseContactRepository.ts
+│   │       └── firebaseHistorialRepository.ts
+│   ├── domain
+│   │   ├── entities
+│   │   │   └── contact.ts
+│   │   ├── repositories
+│   │   │   ├── contactRepository.ts
+│   │   │   └── historialRepository.ts
+│   │   └── usecases
+│   │       ├── createContact.ts
+│   │       ├── createHistorial.ts
+│   │       ├── deleteContact.ts
+│   │       ├── deleteContactBatch.ts
+│   │       ├── getAllContacts.ts
+│   │       ├── getAllHistorial.ts
+│   │       └── updateContact.ts
+│   ├── index.css
+│   ├── main.tsx
+│   ├── presentation
+│   │   ├── components
+│   │   │   ├── ConfirmDeleteModal.tsx
+│   │   │   ├── ContactForm.tsx
+│   │   │   ├── ContactModalForm.tsx
+│   │   │   ├── ContactRow.tsx
+│   │   │   ├── ContactTable.tsx
+│   │   │   ├── DeletingOverlay.tsx
+│   │   │   ├── ExportModal.tsx
+│   │   │   ├── Layout.tsx
+│   │   │   ├── Navbar.tsx
+│   │   │   ├── Pagination.tsx
+│   │   │   ├── ProtectedRoute.tsx
+│   │   │   ├── QuickActions.tsx
+│   │   │   └── StatisticsDashboard.tsx
+│   │   ├── context
+│   │   │   └── AuthContext.tsx
+│   │   ├── viewmodels
+│   │   │   └── useAuth.ts
+│   │   └── views
+│   │       ├── Dashboard.tsx
+│   │       ├── ForgotPassword.tsx
+│   │       ├── History.tsx
+│   │       ├── Login.tsx
+│   │       ├── Register.tsx
+│   │       └── Statistics.tsx
+│   ├── styles.css
+│   ├── utils
+│   │   ├── dashboardUtils.ts
+│   │   ├── exportUtils.ts
+│   │   ├── format.ts
+│   │   ├── formUtils.ts
+│   │   └── paginationUtils.ts
+│   └── vite-env.d.ts
+├── tailwind.config.js
+├── tsconfig.app.json
+├── tsconfig.json
+├── tsconfig.node.json
+└── vite.config.ts
+
+25 directories, 71 files
