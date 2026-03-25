@@ -1,10 +1,43 @@
 // src/presentation/views/History.tsx
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import * as XLSX from "xlsx";
 
 import { ContactoConHistorial } from "../../domain/entities/contact";
 import { obtenerHistorial } from "../../data/datasources/historialService";
+
+function formatoFecha(iso?: string): string {
+  if (!iso) return "-";
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return String(iso);
+
+  // ✅ Perú
+  return d.toLocaleString("es-PE", { timeZone: "America/Lima" });
+}
+
+function etiquetaCategoria(raw: unknown): string {
+  const v = String(raw ?? "").toLowerCase().trim();
+  if (v === "parlamento") return "Parlamento";
+  if (v === "diputado") return "Diputado";
+  if (v === "senador") return "Senador";
+  if (v === "congresal") return "Congresal";
+  return "Parlamento";
+}
+
+function etiquetaMovimiento(raw: unknown): string {
+  const v = String(raw ?? "").toUpperCase().trim();
+
+  if (v === "BAJA_PERSONA") return "Baja de persona";
+  if (v === "REACTIVACION") return "Reactivación";
+  if (v === "ASIGNACION") return "Asignación";
+  if (v === "ACTUALIZACION") return "Actualización";
+
+  if (v === "CAMBIO_EQUIPO") return "Cambio de equipo";
+  if (v === "CAMBIO_NUMERO") return "Cambio de número";
+  if (v === "CAMBIO_NUMERO_Y_EQUIPO") return "Cambio de número + equipo";
+
+  return v || "-";
+}
 
 const History = () => {
   const [historial, setHistorial] = useState<ContactoConHistorial[]>([]);
@@ -14,8 +47,8 @@ const History = () => {
   useEffect(() => {
     const cargarHistorial = async () => {
       try {
-        const contactos = await obtenerHistorial();
-        setHistorial(contactos);
+        const data = await obtenerHistorial();
+        setHistorial(data);
       } catch (error) {
         console.error("Error al obtener historial:", error);
       } finally {
@@ -26,17 +59,46 @@ const History = () => {
     cargarHistorial();
   }, []);
 
+  const historialLimpio = useMemo(() => {
+    return historial
+      .filter((c) => {
+        const nombre = String(
+          c.nombreCompleto ?? `${c.primerNombre ?? ""} ${c.primerApellido ?? ""}`
+        )
+          .toUpperCase()
+          .trim();
+
+        return nombre !== "";
+      })
+      // ✅ Orden por último movimiento (createdAt)
+      .sort((a, b) => {
+        const fa = new Date(a.createdAt ?? 0).getTime();
+        const fb = new Date(b.createdAt ?? 0).getTime();
+        return fb - fa;
+      });
+  }, [historial]);
+
   const exportarHistorialAExcel = () => {
-    if (historial.length === 0) {
+    if (historialLimpio.length === 0) {
       alert("No hay datos para exportar.");
       return;
     }
 
-    const dataParaExcel = historial.map((contacto) => ({
-      Nombre: `${contacto.primerNombre} ${contacto.primerApellido}`,
-      Teléfono: contacto.telefono,
-      Área: contacto.area,
-      "Eliminado en": new Date(contacto.eliminadoEn).toLocaleString(),
+    const dataParaExcel = historialLimpio.map((c) => ({
+      Nombre: (
+        c.nombreCompleto || `${c.primerNombre ?? ""} ${c.primerApellido ?? ""}`
+      )
+        .trim(),
+      Teléfono: c.telefono,
+      Área: c.area,
+      Categoría: etiquetaCategoria(c.categoria),
+      Marca: c.marca || "-",
+      Modelo: c.modelo || "-",
+      Serie: c.serie || "-",
+      Movimiento: etiquetaMovimiento(c.tipoMovimiento),
+      Estado: c.estado ?? "INACTIVO",
+      "Fecha movimiento": formatoFecha(c.createdAt),
+      Observación: c.observacion ?? "",
     }));
 
     const worksheet = XLSX.utils.json_to_sheet(dataParaExcel);
@@ -50,8 +112,9 @@ const History = () => {
     <div className="min-h-screen bg-gray-100 p-6">
       <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center mb-4 gap-4">
         <h2 className="text-2xl font-bold text-gray-800">
-          Historial de Contactos Eliminados
+          Historial de Movimientos (Contactos)
         </h2>
+
         <div className="flex gap-2">
           <button
             onClick={exportarHistorialAExcel}
@@ -59,6 +122,7 @@ const History = () => {
           >
             📁 Exportar a Excel
           </button>
+
           <button
             onClick={() => navigate("/dashboard")}
             className="bg-blue-600 text-white px-4 py-2 rounded hover:bg-blue-700"
@@ -70,10 +134,8 @@ const History = () => {
 
       {cargando ? (
         <p className="text-center text-gray-500">Cargando historial...</p>
-      ) : historial.length === 0 ? (
-        <p className="text-center text-gray-500">
-          No hay contactos eliminados.
-        </p>
+      ) : historialLimpio.length === 0 ? (
+        <p className="text-center text-gray-500">No hay movimientos.</p>
       ) : (
         <div className="overflow-x-auto bg-white rounded shadow p-4">
           <table className="min-w-full text-sm border">
@@ -82,19 +144,43 @@ const History = () => {
                 <th className="py-2 px-4 border">Nombre</th>
                 <th className="py-2 px-4 border">Teléfono</th>
                 <th className="py-2 px-4 border">Área</th>
-                <th className="py-2 px-4 border">Eliminado en</th>
+                <th className="py-2 px-4 border">Categoría</th>
+                <th className="py-2 px-4 border">Marca</th>
+                <th className="py-2 px-4 border">Modelo</th>
+                <th className="py-2 px-4 border">Serie</th>
+                <th className="py-2 px-4 border">Movimiento</th>
+                <th className="py-2 px-4 border">Estado</th>
+                <th className="py-2 px-4 border">Fecha</th>
               </tr>
             </thead>
+
             <tbody>
-              {historial.map((contacto) => (
-                <tr key={contacto.id} className="hover:bg-gray-100">
+              {historialLimpio.map((c) => (
+                <tr key={c.id} className="hover:bg-gray-100">
                   <td className="py-2 px-4 border">
-                    {contacto.primerNombre} {contacto.primerApellido}
+                    {(
+                      c.nombreCompleto ||
+                      `${c.primerNombre ?? ""} ${c.primerApellido ?? ""}`
+                    ).trim()}
                   </td>
-                  <td className="py-2 px-4 border">{contacto.telefono}</td>
-                  <td className="py-2 px-4 border">{contacto.area}</td>
+                  <td className="py-2 px-4 border">{c.telefono}</td>
+                  <td className="py-2 px-4 border">{c.area}</td>
                   <td className="py-2 px-4 border">
-                    {new Date(contacto.eliminadoEn).toLocaleString()}
+                    {etiquetaCategoria(c.categoria)}
+                  </td>
+                  <td className="py-2 px-4 border">{c.marca || "-"}</td>
+                  <td className="py-2 px-4 border">{c.modelo || "-"}</td>
+                  <td className="py-2 px-4 border">{c.serie || "-"}</td>
+                  <td className="py-2 px-4 border">
+                    {etiquetaMovimiento(c.tipoMovimiento)}
+                  </td>
+                  <td className="py-2 px-4 border">
+                    <span className="inline-flex px-2 py-1 rounded bg-gray-200 text-gray-800 font-semibold">
+                      {c.estado ?? "INACTIVO"}
+                    </span>
+                  </td>
+                  <td className="py-2 px-4 border">
+                    {formatoFecha(c.createdAt)}
                   </td>
                 </tr>
               ))}

@@ -8,7 +8,8 @@ import History from "./presentation/views/History";
 import Statistics from "./presentation/views/Statistics";
 import Perfil from "./presentation/views/Perfil";
 import ProtectedRoute from "./presentation/components/ProtectedRoute";
-import Layout from "./presentation/components/Layout"; // 👈 Importa Layout
+import Layout from "./presentation/components/Layout";
+
 
 function App() {
   return (
@@ -31,6 +32,7 @@ function App() {
           <Route path="/historial" element={<History />} />
           <Route path="/estadisticas" element={<Statistics />} />
           <Route path="/perfil" element={<Perfil />} />
+         
         </Route>
 
         {/* Ruta por defecto */}

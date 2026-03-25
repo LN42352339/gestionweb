@@ -13,7 +13,7 @@ import { db, secondaryAuth } from "../../config/firebaseConfig";
 export type Rol = "admin" | "congresal" | "parlamento";
 
 export interface Usuario {
-  id?: string; // normalmente será el UID
+  id?: string; // normalmente será el UID (docId)
   telefono: string;
   rol: Rol;
   nombre?: string;
@@ -21,9 +21,16 @@ export interface Usuario {
   activo?: boolean;
 }
 
-const digits = (v: unknown) => String(v ?? "").replace(/\D+/g, "");
+/**
+ * Error tipado para evitar `any` y poder leer `.code` de forma segura.
+ */
+interface AppError extends Error {
+  code?: string;
+}
 
-function buildEmailFromPhone(phone: string) {
+const digits = (v: unknown): string => String(v ?? "").replace(/\D+/g, "");
+
+function buildEmailFromPhone(phone: string): string {
   return `${digits(phone)}@conectape.pe`;
 }
 
@@ -49,12 +56,20 @@ export async function crearUsuarioDesdePerfil(params: {
   password: string;
   nombre: string;
   rol: Rol;
-}) {
+}): Promise<{ uid: string; email: string }> {
   const telefonoClean = digits(params.telefono);
 
   // Validación Perú (9 dígitos y empieza en 9)
   if (!/^9\d{8}$/.test(telefonoClean)) {
     throw new Error("El teléfono debe tener 9 dígitos y comenzar con 9 (Perú).");
+  }
+
+  // ✅ 0) Validar si ya existe en Firestore por teléfono
+  const existente = await obtenerUsuarioPorTelefono(telefonoClean);
+  if (existente) {
+    const err: AppError = new Error("Ese teléfono ya está registrado.");
+    err.code = "telefono/ya-existe";
+    throw err;
   }
 
   const email = buildEmailFromPhone(telefonoClean);

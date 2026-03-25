@@ -135,7 +135,7 @@ export function descargarPlantillaContactos() {
       primerApellido: "PEREZ",
       segundoApellido: "GOMEZ",
       area: "SISTEMAS",
-      categoria: "congresal", // ✅ clave
+      categoria: "parlamento", // ✅ clave
       fechaAtencion: "01/12/2025", // dd/mm/yyyy
       operador: "CLARO",
       telefono: "912345678", // 9 dígitos

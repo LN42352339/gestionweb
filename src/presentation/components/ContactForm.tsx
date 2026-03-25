@@ -1,15 +1,11 @@
-// src/components/ContactForm.tsx
+// src/presentation/components/ContactForm.tsx
 import React from "react";
 import { Contacto } from "../../domain/entities/contact";
-
-type Categoria = "parlamento" | "congresal";
 
 interface ContactFormProps {
   contacto: Contacto;
   modoEdicion: boolean;
-  manejarCambio: (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => void;
+  manejarCambio: (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => void;
   manejarSubmit: () => void;
 }
 
@@ -20,35 +16,27 @@ const ContactForm: React.FC<ContactFormProps> = ({
   manejarSubmit,
 }) => {
   const hoyISO = new Date().toISOString().slice(0, 10);
+  const letrasPattern = "^[A-Za-zÁÉÍÓÚáéíóúÑñ ]+$";
 
-  // ✅ Manejo especial para TELÉFONO (Perú): solo números, máximo 9
-  const manejarCambioTelefono = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const digits = String(e.target.value).replace(/\D+/g, "").slice(0, 9);
-
+  const manejarCambioTelefono = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const digits = e.target.value.replace(/\D+/g, "").slice(0, 9);
     manejarCambio({
       ...e,
       target: { ...e.target, name: "telefono", value: digits },
     } as React.ChangeEvent<HTMLInputElement>);
   };
 
-  // ✅ Manejo especial para SERIE/IMEI: solo números, máximo 15
-  const manejarCambioSerie = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>
-  ) => {
-    const digits = String(e.target.value).replace(/\D+/g, "").slice(0, 15);
-
+  const manejarCambioSerie = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const digits = e.target.value.replace(/\D+/g, "").slice(0, 15);
     manejarCambio({
       ...e,
       target: { ...e.target, name: "serie", value: digits },
     } as React.ChangeEvent<HTMLInputElement>);
   };
 
-  const letrasPattern = "^[A-Za-zÁÉÍÓÚáéíóúÑñ ]+$";
-
   return (
     <form
+      noValidate
       onSubmit={(e) => {
         e.preventDefault();
         manejarSubmit();
@@ -59,7 +47,6 @@ const ContactForm: React.FC<ContactFormProps> = ({
       </h3>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {/* NOMBRES */}
         <input
           type="text"
           name="primerNombre"
@@ -68,7 +55,6 @@ const ContactForm: React.FC<ContactFormProps> = ({
           onChange={manejarCambio}
           required
           pattern={letrasPattern}
-          title="Solo letras y espacios (sin números)"
           className="p-2 border border-gray-300 rounded"
         />
 
@@ -79,11 +65,9 @@ const ContactForm: React.FC<ContactFormProps> = ({
           value={contacto.segundoNombre || ""}
           onChange={manejarCambio}
           pattern={letrasPattern}
-          title="Solo letras y espacios (sin números)"
           className="p-2 border border-gray-300 rounded"
         />
 
-        {/* APELLIDOS */}
         <input
           type="text"
           name="primerApellido"
@@ -92,7 +76,6 @@ const ContactForm: React.FC<ContactFormProps> = ({
           onChange={manejarCambio}
           required
           pattern={letrasPattern}
-          title="Solo letras y espacios (sin números)"
           className="p-2 border border-gray-300 rounded"
         />
 
@@ -103,11 +86,9 @@ const ContactForm: React.FC<ContactFormProps> = ({
           value={contacto.segundoApellido || ""}
           onChange={manejarCambio}
           pattern={letrasPattern}
-          title="Solo letras y espacios (sin números)"
           className="p-2 border border-gray-300 rounded"
         />
 
-        {/* ÁREA */}
         <input
           type="text"
           name="area"
@@ -118,7 +99,6 @@ const ContactForm: React.FC<ContactFormProps> = ({
           className="p-2 border border-gray-300 rounded"
         />
 
-        {/* FECHA DE ATENCIÓN (NO FUTURA) */}
         <input
           type="date"
           name="fechaAtencion"
@@ -126,18 +106,15 @@ const ContactForm: React.FC<ContactFormProps> = ({
           onChange={manejarCambio}
           required
           max={hoyISO}
-          title="La fecha de atención no puede ser mayor a la fecha actual"
           className="p-2 border border-gray-300 rounded"
         />
 
-        {/* OPERADOR */}
         <select
           name="operador"
           value={contacto.operador || ""}
           onChange={manejarCambio}
           required
           className="p-2 border border-gray-300 rounded bg-white"
-          title="Seleccione un operador"
         >
           <option value="">Seleccione operador</option>
           <option value="CLARO">CLARO</option>
@@ -146,56 +123,50 @@ const ContactForm: React.FC<ContactFormProps> = ({
           <option value="BITEL">BITEL</option>
         </select>
 
-        {/* ✅ CATEGORÍA */}
+        {/* ✅ CATEGORÍA 2026 */}
         <select
           name="categoria"
-          value={((contacto.categoria ?? "congresal") as Categoria) || "congresal"}
+          value={contacto.categoria}
           onChange={manejarCambio}
           required
           className="p-2 border border-gray-300 rounded bg-white"
-          title="Seleccione una categoría"
         >
-          <option value="congresal">CONGRESAL</option>
           <option value="parlamento">PARLAMENTO</option>
+          <option value="diputado">DIPUTADO</option>
+          <option value="senador">SENADOR</option>
         </select>
 
-        {/* TELÉFONO PERÚ */}
         <input
           type="text"
           name="telefono"
-          placeholder="Teléfono (Perú - 9 dígitos, empieza con 9)"
+          placeholder="Teléfono (9 dígitos)"
           value={contacto.telefono}
           onChange={manejarCambioTelefono}
           required
           inputMode="numeric"
-          pattern="^9\d{8}$"
           maxLength={9}
-          title="El teléfono debe tener 9 dígitos y comenzar con 9 (Perú)"
           className="p-2 border border-gray-300 rounded"
         />
 
-        {/* MARCA */}
-        <div className="flex flex-col">
-          <input
-            type="text"
-            name="marca"
-            placeholder="Marca del equipo"
-            value={contacto.marca}
-            onChange={manejarCambio}
-            required
-            list="marcas"
-            className="p-2 border border-gray-300 rounded"
-          />
-          <datalist id="marcas">
-            <option value="SAMSUNG" />
-            <option value="APPLE" />
-            <option value="XIAOMI" />
-            <option value="MOTOROLA" />
-            <option value="HONOR" />
-          </datalist>
-        </div>
+        <input
+          type="text"
+          name="marca"
+          placeholder="Marca del equipo"
+          value={contacto.marca}
+          onChange={manejarCambio}
+          required
+          list="marcas"
+          className="p-2 border border-gray-300 rounded"
+        />
 
-        {/* MODELO */}
+        <datalist id="marcas">
+          <option value="SAMSUNG" />
+          <option value="APPLE" />
+          <option value="XIAOMI" />
+          <option value="MOTOROLA" />
+          <option value="HONOR" />
+        </datalist>
+
         <input
           type="text"
           name="modelo"
@@ -206,7 +177,6 @@ const ContactForm: React.FC<ContactFormProps> = ({
           className="p-2 border border-gray-300 rounded"
         />
 
-        {/* SERIE/IMEI */}
         <input
           type="text"
           name="serie"
@@ -215,17 +185,10 @@ const ContactForm: React.FC<ContactFormProps> = ({
           onChange={manejarCambioSerie}
           required
           inputMode="numeric"
-          pattern="^[0-9]{15}$"
           maxLength={15}
-          title="El IMEI debe tener exactamente 15 dígitos numéricos"
           className="p-2 border border-gray-300 rounded"
         />
       </div>
-
-      <p className="text-xs text-gray-500 mt-2">
-        * Teléfono: 9 dígitos y comienza con 9 (Perú). IMEI/Serie: exactamente 15 dígitos.
-        La fecha de atención no puede ser mayor a hoy.
-      </p>
 
       <div className="mt-6 flex justify-end">
         <button
@@ -240,4 +203,3 @@ const ContactForm: React.FC<ContactFormProps> = ({
 };
 
 export default ContactForm;
-

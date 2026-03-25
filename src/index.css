@@ -2,32 +2,35 @@
 @import "tailwindcss";
 
 /* Reset y estilos globales */
-html, body {
+html,
+body {
   margin: 0;
   padding: 0;
   width: 100%;
   min-height: 100vh;
 }
 
+/* Placeholder */
 input::placeholder {
-  color: #9ca3af; /* gris */
+  color: #9ca3af;
   opacity: 1 !important;
 }
 
+/* Autofill */
 input:-webkit-autofill {
   box-shadow: 0 0 0px 1000px white inset !important;
   -webkit-text-fill-color: #000 !important;
 }
 
-/* Definición global de la fuente y otros parámetros */
+/* Fuente global */
 :root {
   font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
   line-height: 1.5;
   font-weight: 400;
-  color-scheme: light dark;
+  color-scheme: light;
 }
 
-/* Estilos básicos para enlaces */
+/* Links */
 a {
   font-weight: 500;
   color: #646cff;
@@ -37,7 +40,7 @@ a:hover {
   color: #535bf2;
 }
 
-/* Estilos básicos para botones */
+/* Botones globales */
 button {
   border-radius: 8px;
   border: 1px solid transparent;
@@ -45,8 +48,8 @@ button {
   font-size: 1em;
   font-weight: 500;
   font-family: inherit;
-  background-color: #F54C4C; /* Color de fondo del botón */
-  color: #f4f4f7; /* Color del texto */
+  background-color: #f54c4c;
+  color: #f4f4f7;
   cursor: pointer;
   transition: border-color 0.25s, background-color 0.25s;
 }
@@ -58,37 +61,99 @@ button:focus-visible {
   outline: 4px auto -webkit-focus-ring-color;
 }
 
-/* Estilos para modo claro (opcional) */
-@media (prefers-color-scheme: light) {
-  :root {
-    color: #213547;
-    background-color: #ffffff;
-  }
-  a:hover {
-    color: #747bff;
-  }
-  button {
-    background-color: #F54C4C;
-  }
-}
-
 /* --- Fix global para checkbox visibles en Safari y Chrome --- */
 input[type="checkbox"] {
-  -webkit-appearance: none; /* Safari */
-  appearance: none;         /* General */
+  -webkit-appearance: none;
+  appearance: none;
   width: 18px;
   height: 18px;
   border: 2px solid #555;
   border-radius: 4px;
-  background-color: white;
+  background-color: #fff;
   cursor: pointer;
 }
-
 input[type="checkbox"]:checked {
-  background-color: #F54C4C; /* tu color institucional */
-  border-color: #F54C4C;
+  background-color: #f54c4c;
+  border-color: #f54c4c;
   background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 16 16' fill='white' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M6 10.8L3.2 8l-1.4 1.4L6 13.6l8-8-1.4-1.4z'/%3E%3C/svg%3E");
   background-repeat: no-repeat;
   background-position: center;
+}
+
+/* ===================== */
+/* 🖨️ IMPRESIÓN (CORREGIDO) */
+/* ===================== */
+@media print {
+  /* Papel y orientación */
+  @page {
+    size: A4 landscape;
+    margin: 8mm; /* menos margen = más grande */
+  }
+
+  html,
+  body {
+    background: #fff !important;
+    color: #111827 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Ocultar todo */
+  body * {
+    visibility: hidden !important;
+  }
+
+  /* Mostrar solo el reporte */
+  #reporte-estadisticas,
+  #reporte-estadisticas * {
+    visibility: visible !important;
+  }
+
+  /* El reporte ocupa toda el área imprimible */
+  #reporte-estadisticas {
+    position: static !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 90% !important;
+  }
+
+  /* Quitar sombras para PDF limpio */
+  * {
+    box-shadow: none !important;
+    text-shadow: none !important;
+    filter: none !important;
+  }
+
+  /* Recharts: evitar comportamientos raros */
+  .recharts-tooltip-wrapper,
+  .recharts-legend-wrapper {
+    display: none !important;
+  }
+
+  .recharts-wrapper,
+  .recharts-surface {
+    width: 100% !important;
+    height: auto !important;
+    overflow: visible !important;
+  }
+
+  /* Quitar scroll al imprimir */
+  .print-no-scroll {
+    overflow: visible !important;
+    height: auto !important;
+    max-height: none !important;
+  }
+
+  .print-static-head {
+    position: static !important;
+    top: auto !important;
+  }
+
+  /* ✅ HACERLO MÁS GRANDE SIN TOCAR “ESCALA” DEL NAVEGADOR */
+  .stats-report {
+    transform: scale(1.12);         /* prueba 1.08–1.18 */
+    transform-origin: top left;
+    width: 100% !important;
+  }
 }
 

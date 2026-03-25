@@ -1,23 +1,43 @@
-// Interfaz principal del contacto
+// src/domain/entities/contact.ts
+
+export type Categoria = "parlamento" | "diputado" | "senador" | "congresal";
+export type EstadoContacto = "ACTIVO" | "INACTIVO";
+
+// ✅ Tipos de movimiento para auditoría
+export type TipoMovimientoHistorial =
+  | "BAJA_PERSONA"
+  | "REACTIVACION"
+  | "ASIGNACION"
+  | "ACTUALIZACION";
+
 export interface Contacto {
-  id?: string; // Se genera automáticamente por Firestore
+  id?: string;
   primerNombre: string;
   segundoNombre?: string;
   primerApellido: string;
   segundoApellido?: string;
   area: string;
-  fechaAtencion: string; // formato string "YYYY-MM-DD" o "DD/MM/YYYY"
+  fechaAtencion: string;
   operador: string;
   telefono: string;
   marca: string;
   modelo: string;
   serie: string;
-  nombreCompleto?: string; // generado automáticamente si no se provee
-  createdAt?: string; // ← NUEVO (ISO string o DD/MM/YYYY)
-  categoria: "parlamento" | "congresal";
+  nombreCompleto: string;
+  categoria: Categoria;
+  estado?: EstadoContacto;
+  createdAt?: string;
 }
 
-// Interfaz extendida para contactos eliminados con historial
-export interface ContactoConHistorial extends Contacto {
-  eliminadoEn: string; // fecha de eliminación
+// ✅ Historial: copia del contacto + metadata del movimiento
+export interface ContactoConHistorial extends Omit<Contacto, "id"> {
+  id?: string;
+  eliminadoEn: string;
+
+  // ✅ Para enlazar con el doc original
+  contactoIdOriginal?: string;
+
+  // ✅ Auditoría fina
+  tipoMovimiento: TipoMovimientoHistorial;
+  observacion?: string;
 }

@@ -2,15 +2,17 @@
 import { Contacto } from "../entities/contact";
 
 export interface ContactRepository {
-  // 🔥 Ahora permite un filtro opcional por categoría
+  // ✅ Filtro opcional por categoría
   getAll(categoria?: string): Promise<Contacto[]>;
+
+  // ✅ (Recomendado) Para cuando un UseCase o pantalla necesite un solo contacto
+  getById?(id: string): Promise<Contacto | null>;
 
   create(contacto: Contacto): Promise<string>;
   update(id: string, contacto: Contacto): Promise<void>;
   delete(id: string): Promise<void>;
 
-  // Opcional, porque no todos los repositorios necesitan implementarlo
+  // ✅ Opcional
   deleteBatch?(ids: string[]): Promise<void>;
 }
-
 

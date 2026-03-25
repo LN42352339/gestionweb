@@ -1,6 +1,8 @@
-import { initializeApp, getApps } from "firebase/app";
+import { initializeApp, getApp, getApps, type FirebaseApp } from "firebase/app";
 import { getFirestore } from "firebase/firestore";
 import { getAuth } from "firebase/auth";
+import { getFunctions } from "firebase/functions";
+// import { connectFunctionsEmulator } from "firebase/functions"; // (opcional)
 
 const firebaseConfig = {
   apiKey: "AIzaSyDsAtvXK608p-qsJr6h5eukwNKcd0gsKYE",
@@ -11,12 +13,36 @@ const firebaseConfig = {
   appId: "1:526517937231:web:2d45f0f12754d0d8e8b63a",
 };
 
+/** =========================
+ * ✅ Apps
+ * ========================= */
+
 // ✅ App principal (web admin)
-const app = getApps().length ? getApps()[0] : initializeApp(firebaseConfig);
+export const primaryApp: FirebaseApp = getApps().length
+  ? getApp()
+  : initializeApp(firebaseConfig);
 
-// ✅ App secundaria SOLO para crear usuarios sin tumbar la sesión del admin
-const secondaryApp = initializeApp(firebaseConfig, "secondary");
+// ✅ App secundaria (para crear usuarios sin tumbar sesión del admin)
+export const secondaryApp: FirebaseApp = (() => {
+  try {
+    return getApp("secondary");
+  } catch {
+    return initializeApp(firebaseConfig, "secondary");
+  }
+})();
 
-export const db = getFirestore(app);
-export const auth = getAuth(app);
+/** =========================
+ * ✅ Services
+ * ========================= */
+
+export const db = getFirestore(primaryApp);
+export const auth = getAuth(primaryApp);
 export const secondaryAuth = getAuth(secondaryApp);
+
+// ✅ Functions (para reset seguro)
+export const functions = getFunctions(primaryApp, "us-central1");
+
+// (Opcional) Si algún día usas emulator en local:
+// if (import.meta.env.DEV) {
+//   connectFunctionsEmulator(functions, "localhost", 5001);
+// }
