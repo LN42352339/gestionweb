@@ -7,6 +7,11 @@ yarn-error.log*
 pnpm-debug.log*
 lerna-debug.log*
 
+# Variables de entorno (no subir al repositorio)
+.env
+.env.local
+.env.production
+
 # Dependencias y compilaciones
 node_modules
 dist

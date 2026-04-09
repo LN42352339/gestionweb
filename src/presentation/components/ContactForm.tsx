@@ -134,6 +134,7 @@ const ContactForm: React.FC<ContactFormProps> = ({
           <option value="parlamento">PARLAMENTO</option>
           <option value="diputado">DIPUTADO</option>
           <option value="senador">SENADOR</option>
+          <option value="congresal">CONGRESAL</option>
         </select>
 
         <input

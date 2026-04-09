@@ -19,13 +19,15 @@ export default function Navbar() {
   const [nombreUsuario, setNombreUsuario] = useState("");
 
   useEffect(() => {
+    let isMounted = true;
+
     const obtenerNombre = async () => {
       if (!user) return;
 
       try {
         let nombreFinal = "";
 
-        // 1️⃣ Intentar por UID (por si el doc se llama igual al uid)
+        // 1️⃣ Intentar por UID
         const docRef = doc(db, "usuarios", user.uid);
         const docSnap = await getDoc(docRef);
 
@@ -44,15 +46,15 @@ export default function Navbar() {
           }
         }
 
-        // 3️⃣ Si encontramos nombre, lo usamos. Si no, "Usuario"
-        setNombreUsuario(nombreFinal || "Usuario");
+        if (isMounted) setNombreUsuario(nombreFinal || "Usuario");
       } catch (error) {
         console.error("Error al obtener el nombre:", error);
-        setNombreUsuario("Usuario");
+        if (isMounted) setNombreUsuario("Usuario");
       }
     };
 
     obtenerNombre();
+    return () => { isMounted = false; };
   }, [user]);
 
   const handleLogout = async () => {

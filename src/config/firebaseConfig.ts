@@ -5,12 +5,12 @@ import { getFunctions } from "firebase/functions";
 // import { connectFunctionsEmulator } from "firebase/functions"; // (opcional)
 
 const firebaseConfig = {
-  apiKey: "AIzaSyDsAtvXK608p-qsJr6h5eukwNKcd0gsKYE",
-  authDomain: "gestioncontactos-a145c.firebaseapp.com",
-  projectId: "gestioncontactos-a145c",
-  storageBucket: "gestioncontactos-a145c.appspot.com",
-  messagingSenderId: "526517937231",
-  appId: "1:526517937231:web:2d45f0f12754d0d8e8b63a",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
 /** =========================

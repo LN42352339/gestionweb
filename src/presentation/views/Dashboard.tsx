@@ -87,7 +87,7 @@ function convertirFechaExcel(fechaSerial: number): string {
 /** Acepta solo estas categorías */
 function normalizarCategoria(raw: unknown): Categoria | null {
   const v = String(raw ?? "").trim().toLowerCase();
-  if (v === "parlamento" || v === "diputado" || v === "senador") {
+  if (v === "parlamento" || v === "diputado" || v === "senador" || v === "congresal") {
     return v as Categoria;
   }
   return null;
@@ -1266,7 +1266,6 @@ export default function Dashboard() {
             reactivarContacto={solicitarReactivacion}
             contactosSeleccionados={selectedIds}
             toggleSeleccion={alternarSeleccion}
-            toggleSeleccionTodos={() => {}}
           />
         </div>
 

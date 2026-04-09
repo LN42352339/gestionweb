@@ -46,7 +46,9 @@ async function notificarN8N(payload: {
   observacion?: string;
 }) {
   try {
-    console.log("📨 Enviando a n8n:", payload.tipoMovimiento, payload);
+    if (import.meta.env.DEV) {
+      console.log("📨 Enviando a n8n:", payload.tipoMovimiento, payload);
+    }
 
     const res = await fetch(N8N_WEBHOOK_URL, {
       method: "POST",
@@ -54,10 +56,14 @@ async function notificarN8N(payload: {
       body: JSON.stringify(payload),
     });
 
-    console.log("✅ n8n respondió:", res.status);
+    if (import.meta.env.DEV) {
+      console.log("✅ n8n respondió:", res.status);
+    }
   } catch (err) {
-    console.warn("⚠️ No se pudo notificar a n8n:", err);
-    // Importante: NO lanzamos error para no romper tu flujo principal
+    if (import.meta.env.DEV) {
+      console.warn("⚠️ No se pudo notificar a n8n:", err);
+    }
+    // Importante: NO lanzamos error para no romper el flujo principal
   }
 }
 

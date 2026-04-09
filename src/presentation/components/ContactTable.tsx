@@ -3,20 +3,6 @@ import React, { useEffect, useMemo, useRef } from "react";
 import ContactRow from "./ContactRow";
 import { Contacto } from "../../domain/entities/contact";
 
-/**
- * =========================
- * Props del componente tabla
- * =========================
- * - contactos: lista que se va a renderizar (ya filtrada en Dashboard)
- * - editarContacto: se ejecuta al darle "editar" a una fila
- * - eliminarContacto: se ejecuta al darle "eliminar" a una fila
- * - reactivarContacto: se ejecuta al darle "reactivar" a una fila INACTIVA
- * - contactosSeleccionados: ids marcados con checkbox
- * - toggleSeleccion: marca/desmarca un id
- *
- * Nota:
- * - toggleSeleccionTodos ya no se usa (lo podemos eliminar para evitar confusión)
- */
 interface ContactTableProps {
   contactos: Contacto[];
   editarContacto: (contacto: Contacto) => void;
@@ -24,9 +10,6 @@ interface ContactTableProps {
   reactivarContacto: (id: string | undefined) => void;
   contactosSeleccionados: string[];
   toggleSeleccion: (id: string) => void;
-
-  // ⚠️ ya no se usa, se puede borrar (ver punto 3)
-  toggleSeleccionTodos: () => void;
 }
 
 const ContactTable: React.FC<ContactTableProps> = ({

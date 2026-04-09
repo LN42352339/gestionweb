@@ -5,8 +5,7 @@ export interface ContactRepository {
   // ✅ Filtro opcional por categoría
   getAll(categoria?: string): Promise<Contacto[]>;
 
-  // ✅ (Recomendado) Para cuando un UseCase o pantalla necesite un solo contacto
-  getById?(id: string): Promise<Contacto | null>;
+  getById(id: string): Promise<Contacto | null>;
 
   create(contacto: Contacto): Promise<string>;
   update(id: string, contacto: Contacto): Promise<void>;
