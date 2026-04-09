@@ -5,6 +5,8 @@ import {
   addDoc,
   query,
   orderBy,
+  where,
+  getCountFromServer,
 } from "firebase/firestore";
 import { db } from "../../config/firebaseConfig";
 
@@ -86,6 +88,15 @@ export class FirebaseHistorialRepository implements HistorialRepository {
         observacion: toStringSeguro(data["observacion"]) || undefined,
       };
     });
+  }
+
+  async countByMovement(tipoMovimiento: TipoMovimientoHistorial): Promise<number> {
+    const q = query(
+      this.collectionRef,
+      where("tipoMovimiento", "==", tipoMovimiento)
+    );
+    const snap = await getCountFromServer(q);
+    return snap.data().count;
   }
 
   async create(contacto: ContactoConHistorial): Promise<string> {

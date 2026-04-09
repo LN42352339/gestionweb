@@ -11,6 +11,7 @@ import {
 import { FirebaseHistorialRepository } from "../repositories/firebaseHistorialRepository";
 import { GetAllHistorialUseCase } from "../../domain/usecases/getAllHistorial";
 import { CreateHistorialUseCase } from "../../domain/usecases/createHistorial";
+import { CountHistorialByMovementUseCase } from "../../domain/usecases/countHistorialByMovement";
 
 // Repositorio concreto
 const historialRepository = new FirebaseHistorialRepository();
@@ -18,6 +19,7 @@ const historialRepository = new FirebaseHistorialRepository();
 // Casos de uso
 const getAllHistorialUseCase = new GetAllHistorialUseCase(historialRepository);
 const createHistorialUseCase = new CreateHistorialUseCase(historialRepository);
+const countHistorialByMovementUseCase = new CountHistorialByMovementUseCase(historialRepository);
 
 /**
  * ✅ Agregar al historial con tipo de movimiento (auditoría)
@@ -66,4 +68,10 @@ export async function agregarAHistorial(
 
 export async function obtenerHistorial(): Promise<ContactoConHistorial[]> {
   return getAllHistorialUseCase.execute();
+}
+
+export async function contarPorMovimiento(
+  tipoMovimiento: TipoMovimientoHistorial
+): Promise<number> {
+  return countHistorialByMovementUseCase.execute(tipoMovimiento);
 }

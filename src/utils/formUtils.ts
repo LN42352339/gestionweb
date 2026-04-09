@@ -19,7 +19,7 @@ type RequiredKeys =
 const SOLO_LETRAS = /^[A-ZÁÉÍÓÚÑ ]+$/;
 
 // ✅ Categorías válidas 2026
-const CATEGORIAS_PERMITIDAS = ["parlamento", "diputado", "senador"] as const;
+const CATEGORIAS_PERMITIDAS = ["parlamento", "diputado", "senador", "congresal"] as const;
 type CategoriaPermitida = (typeof CATEGORIAS_PERMITIDAS)[number];
 
 // ✅ Parse seguro de fecha: soporta YYYY-MM-DD y DD/MM/YYYY
@@ -107,7 +107,7 @@ export function validarContacto(
   // 3) Categoría 2026
   const categoria = String(contacto.categoria ?? "").trim().toLowerCase();
   if (!CATEGORIAS_PERMITIDAS.includes(categoria as CategoriaPermitida)) {
-    return "Categoría inválida. Use: parlamento, diputado o senador.";
+    return "Categoría inválida. Use: parlamento, diputado, senador o congresal.";
   }
 
   // 4) Teléfono Perú: 9 dígitos y empieza con 9
